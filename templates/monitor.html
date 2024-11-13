@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MNIST CNN Training Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+        }
+        .metric-box {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .chart-container {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MNIST CNN Training Monitor</h1>
+        
+        <div class="metrics">
+            <div class="metric-box">
+                <strong>Current Loss:</strong> <span id="currentLoss">-</span>
+            </div>
+            <div class="metric-box">
+                <strong>Current Accuracy:</strong> <span id="currentAccuracy">-</span>%
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="lossChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="accuracyChart"></canvas>
+        </div>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        const lossChart = new Chart(document.getElementById('lossChart'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Training Loss',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Iterations (per 100 batches)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Loss Value'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Training Loss Over Time'
+                    }
+                }
+            }
+        });
+
+        const accuracyChart = new Chart(document.getElementById('accuracyChart'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Training Accuracy',
+                    data: [],
+                    borderColor: 'rgb(153, 102, 255)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Iterations (per 100 batches)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Accuracy (%)',
+                        },
+                        min: 0,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Training Accuracy Over Time'
+                    }
+                }
+            }
+        });
+
+        function updateCharts() {
+            fetch('/get_training_history')
+                .then(response => response.json())
+                .then(data => {
+                    // Update charts
+                    lossChart.data.labels = Array.from(Array(data.loss.length).keys()).map(x => x * 100);
+                    lossChart.data.datasets[0].data = data.loss;
+                    lossChart.update();
+
+                    accuracyChart.data.labels = Array.from(Array(data.accuracy.length).keys()).map(x => x * 100);
+                    accuracyChart.data.datasets[0].data = data.accuracy;
+                    accuracyChart.update();
+
+                    // Update current metrics
+                    if (data.loss.length > 0) {
+                        document.getElementById('currentLoss').textContent = 
+                            data.loss[data.loss.length - 1].toFixed(4);
+                        document.getElementById('currentAccuracy').textContent = 
+                            data.accuracy[data.accuracy.length - 1].toFixed(2);
+                    }
+                });
+        }
+
+        // Update charts every second
+        setInterval(updateCharts, 1000);
+    </script>
+</body>
+</html> 
