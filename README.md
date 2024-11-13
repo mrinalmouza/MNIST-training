@@ -77,15 +77,22 @@ visualizer.visualize_decision_making()
 - Calculates selectivity scores
 - Shows neuron-digit relationships
 
+![alt text](image-7.png)
+![alt text](image-10.png)
+
 #### b. Activation Pattern Analysis
 - Maps neuron responses to different inputs
 - Visualizes neuron preferences
 - Shows activation distributions
 
+![alt text](image-8.png)
+
 #### c. Top Activations Visualization
 - Displays inputs that most activate specific neurons
 - Helps understand learned features
 - Shows neuron specializations
+
+![alt text](image-9.png)
 
 #### d. Neuron Importance Analysis
 - Measures contribution of each neuron
