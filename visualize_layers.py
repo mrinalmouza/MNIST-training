@@ -217,10 +217,10 @@ if __name__ == "__main__":
     visualizer.visualize_first_layer_filters()
     
     print("\n2. Visualizing Feature Maps for each digit")
-    #visualizer.visualize_all_digits()
+    visualizer.visualize_all_digits()
     
     print("\n3. Visualizing Layer Responses across digits")
-    #visualizer.visualize_layer_responses()
+    visualizer.visualize_layer_responses()
     
     print("\n4. Visualizing Decision Making Process")
     visualizer.visualize_decision_making() 
